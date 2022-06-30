@@ -12,14 +12,14 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/crendeha/data/wordpress
+      device: ~/inception/wordpress
   db:
     driver: local
     name: db
     driver_opts:
       type: none
       o: bind
-      device: /home/crendeha/data/mariadb
+      device: ~/inception/mariadb
 
 services:
   mariadb:
