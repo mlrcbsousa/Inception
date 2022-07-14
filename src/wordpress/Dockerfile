@@ -9,8 +9,6 @@ COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d
 COPY ./bin /usr/local/bin
 COPY ./tools /var/www/
 
-RUN chmod +x /usr/local/bin/wordpress_start.sh
-
 ENTRYPOINT [ "/usr/local/bin/wordpress_start.sh" ]
 
 CMD ["/usr/sbin/php-fpm7.3", "--nodaemonize"]

@@ -8,8 +8,6 @@ EXPOSE 443
 COPY ./conf/default /etc/nginx/sites-enabled/default
 COPY ./bin/nginx_start.sh /usr/local/bin
 
-RUN chmod +x /usr/local/bin/nginx_start.sh
-
 ENTRYPOINT [ "/usr/local/bin/nginx_start.sh" ]
 
 CMD ["nginx", "-g", "daemon off;"]
