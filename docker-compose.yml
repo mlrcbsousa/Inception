@@ -20,7 +20,7 @@ volumes:
 
 services:
   mariadb:
-    build: ./src/requirements/mariadb
+    build: ./src/mariadb
     env_file:
       - .env
     volumes:
@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
 
   wordpress:
-    build: ./src/requirements/wordpress
+    build: ./src/wordpress
     env_file:
       - .env
     depends_on:
@@ -42,7 +42,7 @@ services:
     restart: unless-stopped
 
   nginx:
-    build: ./src/requirements/nginx
+    build: ./src/nginx
     ports:
       - "443:443"
     depends_on:
