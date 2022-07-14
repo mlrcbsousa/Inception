@@ -2,20 +2,17 @@ version: "3.5"
 
 networks:
   app-network:
-    name: app-network
     driver: bridge
 
 volumes:
   wp:
     driver: local
-    name: wp
     driver_opts:
       type: none
       o: bind
       device: ./_data/wordpress
   db:
     driver: local
-    name: db
     driver_opts:
       type: none
       o: bind
@@ -23,10 +20,9 @@ volumes:
 
 services:
   mariadb:
-    container_name: mariadb
-    build: ./requirements/mariadb
+    build: ./srcs/requirements/mariadb
     env_file:
-      - .env
+      - ./srcs/.env
     volumes:
       - db:/var/lib/mysql
     networks:
@@ -34,10 +30,9 @@ services:
     restart: unless-stopped
 
   wordpress:
-    container_name: wordpress
-    build: ./requirements/wordpress
+    build: ./srcs/requirements/wordpress
     env_file:
-      - .env
+      - ./srcs/.env
     depends_on:
       - mariadb
     volumes:
@@ -47,8 +42,7 @@ services:
     restart: unless-stopped
 
   nginx:
-    container_name: nginx
-    build: ./requirements/nginx
+    build: ./srcs/requirements/nginx
     ports:
       - "443:443"
     depends_on:

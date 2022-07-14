@@ -1,11 +1,11 @@
 all: init
-	@docker-compose -f ./srcs/docker-compose.yml up
+	@docker-compose up
 
 down:
-	@docker-compose -f ./srcs/docker-compose.yml down
+	@docker-compose down
 
 re: init
-	@docker-compose -f srcs/docker-compose.yml up --build
+	@docker-compose up --build
 
 clean:
 	@docker stop $$(docker ps -qa);\
