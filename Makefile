@@ -4,8 +4,8 @@ all: init
 down:
 	@docker-compose down
 
-re: init
-	@docker-compose up --build
+build: init
+	@docker-compose build
 
 clean:
 	@docker stop $$(docker ps -qa --filter 'name=inception-*');\
@@ -17,4 +17,4 @@ clean:
 init:
 	mkdir -p _data/mariadb _data/wordpress
 
-.PHONY: all re down clean
+.PHONY: all build down clean init
