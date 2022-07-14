@@ -20,9 +20,9 @@ volumes:
 
 services:
   mariadb:
-    build: ./srcs/requirements/mariadb
+    build: ./src/requirements/mariadb
     env_file:
-      - ./srcs/.env
+      - ./src/.env
     volumes:
       - db:/var/lib/mysql
     networks:
@@ -30,9 +30,9 @@ services:
     restart: unless-stopped
 
   wordpress:
-    build: ./srcs/requirements/wordpress
+    build: ./src/requirements/wordpress
     env_file:
-      - ./srcs/.env
+      - ./src/.env
     depends_on:
       - mariadb
     volumes:
@@ -42,7 +42,7 @@ services:
     restart: unless-stopped
 
   nginx:
-    build: ./srcs/requirements/nginx
+    build: ./src/requirements/nginx
     ports:
       - "443:443"
     depends_on:
