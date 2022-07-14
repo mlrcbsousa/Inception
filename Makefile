@@ -1,10 +1,12 @@
-all: init
+all: build up
+
+up: init
 	@docker-compose up
 
 down:
 	@docker-compose down
 
-build: init
+build:
 	@docker-compose build
 
 clean:
@@ -17,4 +19,4 @@ clean:
 init:
 	mkdir -p _data/mariadb _data/wordpress
 
-.PHONY: all build down clean init
+.PHONY: all build up down clean init
