@@ -22,7 +22,7 @@ services:
   mariadb:
     build: ./src/requirements/mariadb
     env_file:
-      - ./src/.env
+      - .env
     volumes:
       - db:/var/lib/mysql
     networks:
@@ -32,7 +32,7 @@ services:
   wordpress:
     build: ./src/requirements/wordpress
     env_file:
-      - ./src/.env
+      - .env
     depends_on:
       - mariadb
     volumes:
