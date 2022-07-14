@@ -1,7 +1,8 @@
 FROM debian:buster
 
-RUN apt-get update
-RUN apt-get install -y nginx openssl
+RUN apt-get update \
+  && apt-get install --yes --no-install-recommends nginx openssl \
+  && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 443
 

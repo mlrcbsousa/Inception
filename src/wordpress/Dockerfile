@@ -1,7 +1,9 @@
 FROM debian:buster
 
-RUN apt-get update
-RUN apt-get -y install php7.3 php-mysqli php-fpm wget sendmail
+RUN apt-get update && \
+  apt-get --yes --no-install-recommends install php7.3 php-mysqli php-fpm wget sendmail \
+  && rm -rf /var/lib/apt/lists/*
+
 RUN mkdir /var/lib/wp
 
 EXPOSE 9000
