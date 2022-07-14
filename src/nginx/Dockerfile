@@ -6,10 +6,10 @@ RUN apt-get install -y nginx openssl
 EXPOSE 443
 
 COPY ./conf/default /etc/nginx/sites-enabled/default
-COPY ./bin/nginx_start.sh /var/www
+COPY ./bin/nginx_start.sh /usr/local/bin
 
-RUN chmod +x /var/www/nginx_start.sh
+RUN chmod +x /usr/local/bin/nginx_start.sh
 
-ENTRYPOINT [ "var/www/nginx_start.sh" ]
+ENTRYPOINT [ "/usr/local/bin/nginx_start.sh" ]
 
 CMD ["nginx", "-g", "daemon off;"]
