@@ -2,29 +2,25 @@ version: "3.5"
 
 networks:
   app-network:
-    name: app-network
     driver: bridge
 
 volumes:
   wp:
     driver: local
-    name: wp
     driver_opts:
       type: none
       o: bind
-      device: ~/inception/wordpress
+      device: ./_data/wordpress
   db:
     driver: local
-    name: db
     driver_opts:
       type: none
       o: bind
-      device: ~/inception/mariadb
+      device: ./_data/mariadb
 
 services:
   mariadb:
-    container_name: mariadb
-    build: ./requirements/mariadb
+    build: ./src/mariadb
     env_file:
       - .env
     volumes:
@@ -34,8 +30,7 @@ services:
     restart: unless-stopped
 
   wordpress:
-    container_name: wordpress
-    build: ./requirements/wordpress
+    build: ./src/wordpress
     env_file:
       - .env
     depends_on:
@@ -47,8 +42,7 @@ services:
     restart: unless-stopped
 
   nginx:
-    container_name: nginx
-    build: ./requirements/nginx
+    build: ./src/nginx
     ports:
       - "443:443"
     depends_on:
