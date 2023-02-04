@@ -1,60 +1,130 @@
-version: "3.5"
+version: '3.9'
+
+# https://docs.docker.com/compose/compose-file/#extension
+x-logger: &logger
+  options:
+    max-size: '50m'
+  driver: json-file
+
+x-env-mariadb: &env-mariadb
+  WORDPRESS_DB_NAME:  ${WORDPRESS_DB_NAME:?}
+  MARIADB_HOST:       ${MARIADB_HOST:?}
+  MARIADB_PORT:       ${MARIADB_PORT:?}
+  MARIADB_USER_NAME:  ${MARIADB_USER_NAME:?}
+  MARIADB_USER_PASS:  ${MARIADB_USER_PASS:?}
+  MARIADB_ROOT_PASS:  ${MARIADB_ROOT_PASS:?}
+
+# https://docs.docker.com/compose/environment-variables/set-environment-variables/
+# https://docs.docker.com/compose/environment-variables/env-file/
+
+x-env-wordpress: &env-wordpress
+  WORDPRESS_URL:          ${WORDPRESS_URL:?}
+  WORDPRESS_TITLE:        ${WORDPRESS_TITLE:?}
+  WORDPRESS_USER_NAME:    ${WORDPRESS_USER_NAME:?}
+  WORDPRESS_USER_PASS:    ${WORDPRESS_USER_PASS:?}
+  WORDPRESS_USER_EMAIL:   ${WORDPRESS_USER_EMAIL:?}
+  WORDPRESS_ADMIN_NAME:   ${WORDPRESS_ADMIN_NAME:?}
+  WORDPRESS_ADMIN_PASS:   ${WORDPRESS_ADMIN_PASS:?}
+  WORDPRESS_ADMIN_EMAIL:  ${WORDPRESS_ADMIN_EMAIL:?}
+  WORDPRESS_PORT:         ${WORDPRESS_PORT:?}
+
+x-env-nginx: &env-nginx
+  CERTIFICATE_PATH:             ${CERTIFICATE_PATH:?}
+  PRIVATE_KEY_PATH:             ${PRIVATE_KEY_PATH:?}
+  DOMAIN_IP:                    ${DOMAIN_IP:?}
+  NGINX_PORT:                   ${NGINX_PORT:?}
+  DOMAIN:                       ${DOMAIN:?}
+  WORDPRESS_PORT:               ${WORDPRESS_PORT:?}
+  VOLUME_WORDPRESS_MOUNT_PATH:  ${VOLUME_WORDPRESS_MOUNT_PATH:?}
+  VOLUME_CERTS_MOUNT_PATH:      ${VOLUME_CERTS_MOUNT_PATH:?}
 
 networks:
-  app-network:
-    name: app-network
+  inception:
     driver: bridge
 
 volumes:
-  wp:
-    driver: local
-    name: wp
-    driver_opts:
-      type: none
-      o: bind
-      device: ~/inception/wordpress
   db:
+    name: ${VOLUME_MARIADB:?}
     driver: local
-    name: db
     driver_opts:
       type: none
       o: bind
-      device: ~/inception/mariadb
+      device: ${VOLUME_MARIADB_PATH:?}
+
+  web:
+    name: ${VOLUME_WORDPRESS:?}
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${VOLUME_WORDPRESS_PATH:?}
+
+  certs:
+    name: ${VOLUME_CERTS:?}
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ${VOLUME_CERTS_PATH:?}
 
 services:
   mariadb:
+    platform: linux/arm64/v8
     container_name: mariadb
     build: ./requirements/mariadb
-    env_file:
-      - .env
-    volumes:
-      - db:/var/lib/mysql
+    image: mariadb
+    restart: on-failure
+    init: true
     networks:
-      - app-network
-    restart: unless-stopped
+      - inception
+    volumes:
+      - db:${VOLUME_MARIADB_MOUNT_PATH:?}
+    environment: *env-mariadb
+    healthcheck: # https://medium.com/geekculture/how-to-successfully-implement-a-healthcheck-in-docker-compose-efced60bc08e
+      test: [ 'CMD', 'mysqladmin', 'ping', '--silent', '-u', '${MARIADB_USER_NAME}', '-p${MARIADB_USER_PASS}' ]
+      start_period: 1m
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    logging: *logger
 
   wordpress:
+    platform: linux/arm64/v8
     container_name: wordpress
     build: ./requirements/wordpress
-    env_file:
-      - .env
-    depends_on:
-      - mariadb
-    volumes:
-      - wp:/var/www/html
+    image: wordpress
+    restart: on-failure
+    init: true
     networks:
-      - app-network
-    restart: unless-stopped
+      - inception
+    volumes:
+      - web:${VOLUME_WORDPRESS_MOUNT_PATH:?}
+    environment:
+      <<: *env-mariadb
+      <<: *env-wordpress
+    expose:
+      - ${WORDPRESS_PORT:?}
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    logging: *logger
 
   nginx:
+    platform: linux/arm64/v8
     container_name: nginx
     build: ./requirements/nginx
-    ports:
-      - "443:443"
-    depends_on:
-      - wordpress
-    volumes:
-      - wp:/var/www/html
+    image: nginx
+    restart: on-failure
+    init: true
     networks:
-      - app-network
-    restart: unless-stopped
+      - inception
+    volumes:
+      - web:${VOLUME_WORDPRESS_MOUNT_PATH:?}
+      - certs:${VOLUME_CERTS_MOUNT_PATH:?}:ro # read-only
+    environment: *env-nginx
+    ports:
+      - ${NGINX_PORT}:${NGINX_PORT}
+    depends_on:
+      wordpress:
+        condition: service_started
+    logging: *logger

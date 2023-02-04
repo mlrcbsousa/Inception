@@ -1,15 +1,25 @@
-FROM debian:buster
+FROM alpine:3.14
 
-RUN apt-get update
-RUN apt-get install -y nginx openssl
+LABEL architecture="arm64v8/aarch64"
 
-EXPOSE 443
+# - update and upgrade the Alpine Linux package manager packages
+# - install nginx packages along with other dependencies
+RUN apk update \
+  && apk upgrade \
+  && apk add --no-cache nginx openssl gettext
 
-COPY ./conf/default /etc/nginx/sites-enabled/default
-COPY ./tools/nginx_start.sh /var/www
+# - create the nginx daemon directory if it doesn't exist
+# - remove any configuration files
+RUN mkdir -p /etc/nginx/http.d/ \
+  && rm /etc/nginx/http.d/*.conf
 
-RUN chmod +x /var/www/nginx_start.sh
+# - copy the config file to container root as a template file
+COPY ./conf/default.conf /default.conf.tmpl
 
-ENTRYPOINT [ "var/www/nginx_start.sh" ]
+# - copy the setup script to the container root
+COPY ./tools/run.sh /run.sh
 
-CMD ["nginx", "-g", "daemon off;"]
+# - set the setup script as executable
+RUN chmod +x /run.sh
+
+ENTRYPOINT [ "/run.sh" ]
