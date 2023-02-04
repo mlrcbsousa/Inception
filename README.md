@@ -11,6 +11,16 @@ sudo adduser msousa docker
 sudo reboot
 ```
 
+## Environment variables
+
+Make your own version of the `.env.example` file:
+
+```bash
+cp srcs/.env.example srcs/.env
+```
+
+Fill in the passwords.
+
 ## Run
 
 Build and start project
