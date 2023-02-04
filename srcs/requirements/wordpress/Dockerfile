@@ -29,8 +29,11 @@ RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.ph
 RUN mkdir -p /run/php /var/www/html/wordpress \
   && chmod -R 755 /var/www/html/wordpress
 
-# - add the "wps" group and user
-RUN addgroup -S wps && adduser -S wps -G wps
+# https://askubuntu.com/questions/873839/what-is-the-www-data-user
+
+# - add the "wordpress_server" group and user
+RUN addgroup -S wordpress_server \
+  && adduser -S wordpress_server -G wordpress_server
 
 # https://www.php.net/manual/en/install.fpm.php
 

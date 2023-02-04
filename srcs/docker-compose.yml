@@ -1,11 +1,12 @@
 version: '3.9'
 
-# https://docs.docker.com/compose/compose-file/#extension
+# https://docs.docker.com/config/containers/logging/configure/
 x-logger: &logger
   options:
     max-size: '50m'
   driver: json-file
 
+# https://docs.docker.com/compose/compose-file/#extension
 x-env-mariadb: &env-mariadb
   WORDPRESS_DB_NAME:  ${WORDPRESS_DB_NAME:?}
   MARIADB_HOST:       ${MARIADB_HOST:?}
