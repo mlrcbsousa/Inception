@@ -1,7 +1,5 @@
 FROM alpine:3.14
 
-LABEL architecture="arm64v8/aarch64"
-
 ARG	WORDPRESS_VERSION=5.8.1
 
 # - update and upgrade the Alpine Linux package manager packages

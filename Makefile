@@ -6,9 +6,9 @@ VOLUME_PATHS 	= ${VOLUME_MARIADB_PATH} ${VOLUME_WORDPRESS_PATH} ${VOLUME_CERTS_P
 
 
 ##---  Run  ---##
-all:		build up
+all:		certs build up
 
-build:	certs
+build:	init
 				cd srcs && docker compose build
 
 init:

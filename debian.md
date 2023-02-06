@@ -14,6 +14,14 @@ sudo apt-get update
 sudo apt-get -y install make
 ```
 
+### VirtualBox
+
+Add user to virtualbox to use shared folder
+
+```bash
+sudo usermod -a -G vboxsf msousa
+```
+
 ### Install docker and docker compose using guide on website:
 
 - https://docs.docker.com/engine/install/debian/#install-using-the-repository

@@ -1,7 +1,5 @@
 FROM alpine:3.14
 
-LABEL architecture="arm64v8/aarch64"
-
 # - update and upgrade the Alpine Linux package manager packages
 # - install nginx packages along with other dependencies
 RUN apk update \

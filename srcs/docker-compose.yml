@@ -70,7 +70,6 @@ volumes:
 
 services:
   mariadb:
-    platform: linux/arm64/v8
     container_name: mariadb
     build: ./requirements/mariadb
     image: mariadb
@@ -90,7 +89,6 @@ services:
     logging: *logger
 
   wordpress:
-    platform: linux/arm64/v8
     container_name: wordpress
     build: ./requirements/wordpress
     image: wordpress
@@ -111,7 +109,6 @@ services:
     logging: *logger
 
   nginx:
-    platform: linux/arm64/v8
     container_name: nginx
     build: ./requirements/nginx
     image: nginx

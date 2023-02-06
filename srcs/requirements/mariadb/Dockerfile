@@ -1,7 +1,5 @@
 FROM alpine:3.7
 
-LABEL architecture="arm64v8/aarch64"
-
 # - update and upgrade the Alpine Linux package manager packages
 # - install the packages for MariaDB database, MariaDB client, gettext, and
 #   openrc without caching the package files

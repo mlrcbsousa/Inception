@@ -109,24 +109,29 @@ function generate_ssl_certificate_with_ca {
         -out ${SERVER_CERTIFICATE} -extfile ${CONFIG_EXTENSION}
 }
 
-echo ": 1. Create Certificate Authority"
-create_certificate_authority
+if [ -e $CA_CERTIFICATE ]; then
+	  echo "Certificate already created!"
+else
+    echo ": 1. Create Certificate Authority"
+    create_certificate_authority
 
-echo ": 2. Create the Server private key"
-create_server_private_key
+    echo ": 2. Create the Server private key"
+    create_server_private_key
 
-echo ": 3. Create Certificate Signing Request configuration"
-create_csr_config
+    echo ": 3. Create Certificate Signing Request configuration"
+    create_csr_config
 
-echo ": 4. Generate Certificate Signing Request (CSR) using Server private key"
-generate_csr_with_server_private_key
+    echo ": 4. Generate Certificate Signing Request (CSR) using Server private key"
+    generate_csr_with_server_private_key
 
-echo ": 5. Create a configuration file containing certificate and request X.509 extensions to add."
-create_extension_config
+    echo ": 5. Create a configuration file containing certificate and request X.509 extensions to add."
+    create_extension_config
 
-echo ": 6. Generate SSL certificate with self signed CA"
-generate_ssl_certificate_with_ca
+    echo ": 6. Generate SSL certificate with self signed CA"
+    generate_ssl_certificate_with_ca
 
-echo ": 7. Clean"
-rm -f ${CONFIG_EXTENSION} ${CONFIG_SIGN_REQUEST} ${SERVER_SIGN_REQUEST}
+    echo ": 7. Clean"
+    rm -f ${CONFIG_EXTENSION} ${CONFIG_SIGN_REQUEST} ${SERVER_SIGN_REQUEST}
+fi
+
 
